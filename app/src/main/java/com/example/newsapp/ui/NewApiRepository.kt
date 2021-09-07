@@ -3,7 +3,6 @@ package com.example.newsapp.ui
 import com.example.newsapp.api.NewsApiService
 import com.example.newsapp.database.NewsArticlesDao
 import com.example.newsapp.model.newsApi.dataModel.NewsArticlesModel
-import com.example.newsapp.model.newsApi.networkModel.NewsArticlesNetworkModel
 import com.example.newsapp.util.DataState
 import com.example.newsapp.util.NewsArticleDataMapper
 import kotlinx.coroutines.flow.Flow
@@ -27,31 +26,40 @@ class NewApiRepository @Inject constructor(
                         emit(DataState.Success(it))
                     }
                 } else {
-                    val apiResponse = service.getNewsArticles(query, apiKey)
-                    // Generate Model from API
-                    val newsArticlesModel = NewsArticleDataMapper.apiToNetworkModel(apiResponse)
-                    // Generate Entity from Model
-                    val newsArticleEntity = NewsArticleDataMapper.apiToDataBaseEntity(
-                        query = query,
-                        newsArticlesModel = newsArticlesModel
-                    )
-                    // Save Entity in Database
-                    newsArticleDao.saveNewsArticlesData(newsArticleEntity)
+                    try {
+                        val databaseEntry = newsArticleDao.getBusinessDataForId(query)
+                        emit(
+                            DataState.Success(
+                                NewsArticleDataMapper.databaseEntryToNewsArticlesModel(
+                                    databaseEntry
+                                )
+                            )
+                        )
+                    } catch (e: Exception) {
+                        emit(DataState.Error(e))
+                    } finally {
+                        val apiResponse = service.getNewsArticles(query, apiKey)
+                        // Generate Model from API
+                        val newsArticlesModel = NewsArticleDataMapper.apiToNetworkModel(apiResponse)
+                        // Generate Entity from Model
+                        val newsArticleEntity = NewsArticleDataMapper.apiToDataBaseEntity(
+                            query = query,
+                            newsArticlesModel = newsArticlesModel
+                        )
+                        // Save Entity in Database
+                        newsArticleDao.saveNewsArticlesData(newsArticleEntity)
 
-                    // Fetch Entity from Database
-                    val savedEntity = newsArticleDao.getBusinessDataForId(query)
+                        // Fetch Entity from Database
+                        val savedEntity = newsArticleDao.getBusinessDataForId(query)
 
-                    // Convert Entity to Model To Return
-                    val convertedModel =
-                        NewsArticleDataMapper.databaseEntryToNewsArticlesModel(savedEntity)
-
-                    emit(DataState.Success(convertedModel))
+                        // Convert Entity to Model To Return
+                        val convertedModel =
+                            NewsArticleDataMapper.databaseEntryToNewsArticlesModel(savedEntity)
+                        emit(DataState.Success(convertedModel))
+                    }
                 }
             } catch (e: Exception) {
                 emit(DataState.Error(e))
             }
-
-
         }
-
 }
