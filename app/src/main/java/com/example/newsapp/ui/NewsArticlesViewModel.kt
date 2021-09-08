@@ -47,9 +47,8 @@ class NewsArticlesViewModel
     }
 
     private suspend fun getApiData(query: String) {
-        val apiKey = "OKsEwghCzAPR3kRr7Hp51cFn2tMfXWgj"
         val flowable =
-            repository.getNewsArticleService(query, apiKey, cacheMap)
+            repository.getNewsArticleService(query, cacheMap)
         flowable.collect {
             when (it) {
                 is DataState.Success -> {

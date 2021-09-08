@@ -1,5 +1,6 @@
 package com.example.newsapp.ui
 
+import com.example.newsapp.BuildConfig
 import com.example.newsapp.api.NewsApiService
 import com.example.newsapp.database.NewsArticlesDao
 import com.example.newsapp.model.newsApi.dataModel.NewsArticlesModel
@@ -16,7 +17,6 @@ class NewApiRepository @Inject constructor(
 
     suspend fun getNewsArticleService(
         query: String,
-        apiKey: String,
         cacheMap: Map<String, NewsArticlesModel>
     ): Flow<DataState<NewsArticlesModel>> =
         flow {
@@ -38,7 +38,7 @@ class NewApiRepository @Inject constructor(
                     } catch (e: Exception) {
                         emit(DataState.Error(e))
                     } finally {
-                        val apiResponse = service.getNewsArticles(query, apiKey)
+                        val apiResponse = service.getNewsArticles(query, BuildConfig.API_KEY)
                         // Generate Model from API
                         val newsArticlesModel = NewsArticleDataMapper.apiToNetworkModel(apiResponse)
                         // Generate Entity from Model
