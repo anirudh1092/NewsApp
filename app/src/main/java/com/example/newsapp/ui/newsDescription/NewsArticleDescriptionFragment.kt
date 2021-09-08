@@ -62,7 +62,6 @@ class NewsArticleDescriptionFragment : Fragment() {
         webview.clearCache(true)
     }
 
-
     companion object {
         val NEWS_ARTICLE_MODEL_ARTICLE = "NewsArticleModel:NewsArticle "
 

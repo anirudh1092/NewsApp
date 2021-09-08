@@ -1,12 +1,8 @@
 package com.example.newsapp.ui
 
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.newsapp.BuildConfig
 import com.example.newsapp.model.newsApi.dataModel.NewsArticle
 import com.example.newsapp.model.newsApi.dataModel.NewsArticlesModel
 import com.example.newsapp.util.DataState

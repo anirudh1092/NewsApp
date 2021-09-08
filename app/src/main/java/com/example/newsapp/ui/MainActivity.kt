@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: NewsArticlesViewModel by viewModels()
     private lateinit var searchEditText: EditText
-
+    val TAG = "FragmentTag"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         val fragment = NewsArticlesFragment.getInstance(this, newsArticlesModel)
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragment_container, fragment)
+        transaction.addToBackStack(TAG)
         transaction.commit()
     }
 
@@ -104,4 +105,16 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
     }
 
+    override fun onBackPressed() {
+        val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+        if (fragment==null) {
+            super.onBackPressed()
+            //additional code
+        } else {
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.remove(fragment)
+            transaction.commit()
+            searchEditText.visibility = View.VISIBLE
+        }
+    }
 }
