@@ -111,6 +111,7 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
             //additional code
         } else {
+            supportFragmentManager.popBackStack()
             val transaction = supportFragmentManager.beginTransaction()
             transaction.remove(fragment)
             transaction.commit()
